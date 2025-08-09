@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { getKoreanTime } from '../utils/timezone.js';
 
 const postSchema = new mongoose.Schema({
   user_id: {
@@ -9,13 +8,13 @@ const postSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: [true, '제목은 필수입니다'],
+    required: [true, '제목을 입력해 주세요'],
     trim: true,
-    maxlength: [50, '제목은 50글자 이하여야 합니다']
+    maxlength: [50, '제목은 50글자 이하로 입력해 주세요']
   },
   post_content: {
     type: String,
-    required: [true, '내용은 필수입니다']
+    required: [true, '내용은 필수로 입력해 주세요']
   },
   post_like_count: {
     type: Number,
@@ -34,7 +33,7 @@ const postSchema = new mongoose.Schema({
   },
   post_create_at: {
     type: Date,
-    default: getKoreanTime,
+    default: Date.now,  // 단순하게 UTC로 저장
     required: true
   },
   post_update_at: {
@@ -68,7 +67,7 @@ postSchema.methods.incrementViews = function() {
 // 수정 시간 업데이트 미들웨어
 postSchema.pre('save', function(next) {
   if (!this.isNew && this.isModified()) {
-    this.post_update_at = getKoreanTime();
+    this.post_update_at = new Date(); // UTC로 저장
   }
   next();
 });
